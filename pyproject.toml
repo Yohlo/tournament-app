@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "tournament-app"
+version = "0.1.0"
+description = ""
+authors = ["Kyle Yohler <kyle.yohler@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+uvicorn = {extras = ["standard"], version = "^0.15.0"}
+SQLAlchemy = "^1.4.23"
+alembic = "^1.7.1"
+strawberry-graphql = {extras = ["asgi"], version = "0.111.2"}
+fastapi = "^0.70.0"
+python-jose = "^3.3.0"
+Jinja2 = "^3.1.2"
+websockets = "^10.3"
+
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.9.2"
+flake8-bugbear = "^21.4.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

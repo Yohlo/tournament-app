@@ -1,0 +1,13 @@
+.loginContent {
+    max-width: 480px;
+    align-self: center;
+}
+
+.desktopContent {
+    min-width: 800px !important;
+}
+
+.responsiveContent {
+    width: 100%;
+    max-width: 800px !important;
+}

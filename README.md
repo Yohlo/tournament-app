@@ -4,7 +4,9 @@
 #### Getting Started
 ---
 
-1. Install [`poetry`](https://python-poetry.org/docs/#installation), the package management tool for Python we will be using. This project uses Python `3.10`.
+1. Ensure the following are installed:
+    - [`poetry`](https://python-poetry.org/docs/#installation), the package management tool for Python we will be using. This project uses Python `3.10`.
+    - [`npm` and Node.js](https://nodejs.org/en/download/)
 
 2. Clone this repository
 

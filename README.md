@@ -10,12 +10,9 @@
 
 3. In the root folder, run `poetry install`. This will set up a virtualenv with all dependencies installed.
 
-4. Run `poetry run alembic upgrade head`. This will create a `db.sqlite3` file and set up the projects table schema and data.
-    - To add your own user account as initial data, head to `backend/alembic/versions/2a7[...]_add_initial_data.py` and modify that script before running the `upgrade head` command above.
+4. Create a file named `.env` with `ENV=local` as it's content. (in the root folder)
 
-5. Create a file named `.env` with `ENV=local` as it's content. (in the root folder)
-
-6. Create a file name `.env` in the `frontend` folder with the following content:
+5. Create a file name `.env` in the `frontend` folder with the following content:
 
    ```
    REACT_APP_SERVER_URL=http://localhost:8000
@@ -23,13 +20,16 @@
    REACT_APP_WS_PATH=graphql
    ```
 
+6. Run `poetry run alembic upgrade head` in the root folder. This will create a `db.sqlite3` file and set up the projects table schema and data.
+    - To add your own user account as initial data, head to `backend/alembic/versions/2a7[...]_add_initial_data.py` and modify that script before running the `upgrade head` command above.
+
 7. Run: `npm i` (in the `frontend` folder)
 
 8. Install the ESLint VSCode extension to enable linting
 
 9. Run: `npm run build` (in the `frontend` folder)
 
-10. Run: `peotry run uvicorn main:app --reload` (in the root folder where `main.py` lives)
+10. Run: `poetry run uvicorn main:app --reload` (in the root folder where `main.py` lives)
 
 12. Go to `http://localhost:8000` in your browser
 

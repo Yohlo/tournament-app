@@ -12,7 +12,7 @@ from backend.database import Base
 from datetime import datetime
 from asyncio import Event
 from .shared import get_db_item_by_id, get_db_items, edit_db_item_by_id
-from .player import Player
+from backend.models import Player
 import uuid
 
 user_updated_event = Event()
@@ -28,8 +28,8 @@ class User(Base):
     registration_date: datetime = Column(DateTime, nullable=False)
     last_activity: datetime = Column(DateTime, nullable=False)
 
-    player_id: str = Column(Integer, ForeignKey('players.id'), nullable=True)
-    player: Player = relationship("Player")
+    player_id: int = Column(Integer, ForeignKey('players.id'), nullable=True)
+    player = relationship("Player", back_populates="user")
 
     def __init__(self, number: str, admin: bool = False, player_id: int = None):
         self.admin = admin
@@ -41,7 +41,7 @@ class User(Base):
 
 
 def create_user(db: Session, number: str):
-    user = User(number)
+    user = User(number=number)
     db.add(user)
     db.commit()
     return user
@@ -57,15 +57,22 @@ def get_user(db: Session, id: int):
 
 def get_user_by_number(db: Session, number: str):
     user = db.query(User).\
-        filter(User.number == number).\
-        options(joinedload(User.player)).first()
+        filter(User.number == number).first()
     return user
 
 
-def edit_user(db: Session, id: int, user_attributes: dict):
-    user = edit_db_item_by_id(db, User, id, user_attributes)
+def set_user_player(db: Session, user_id: int, player_id: int):
+    user = db.query(User).\
+        filter(User.id == user_id).first()
     if not user:
-        return user
+        return False
+    player = db.query(Player).\
+        filter(Player.id == player_id).first()
+    if not player:
+        return False
+    
+    user.player_id = player_id
+    user.player = player
     user.last_activity = datetime.now()
     db.commit()
     return user

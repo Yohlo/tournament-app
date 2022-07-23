@@ -14,7 +14,7 @@ settings.BaseDir = _basedir
 
 app = FastAPI()
 
-origins = ["http://localhost"]
+origins = ["http://localhost", "https://bakerloo3000.yohler.net"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -72,6 +72,9 @@ graphql = GraphQL(schema, subscription_protocols=[
     GRAPHQL_WS_PROTOCOL,
 ])
 app.mount('/graphql', graphql)
+
+from backend.routers.music import music # noqa
+app.include_router(music, prefix="/api/music")
 
 from backend.routers.site import site  # noqa
 app.include_router(site)

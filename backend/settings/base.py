@@ -14,3 +14,6 @@ class BaseSettings:
     AuthSecret: str
     AuthAlgorithm: str
     AuthTokenExpireMinutes: int
+    TwilioAccountSid: str
+    TwilioAuthToken:str
+    TwilioServiceSid: str

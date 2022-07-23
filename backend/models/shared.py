@@ -21,7 +21,7 @@ def edit_db_item_by_id(db: Session, model, id: int, attributes: dict):
     if not item:
         return False
     for attr in attributes.keys():
-        if hasattr(item, attr):
+        if hasattr(item, attr) and not (attr == 'id'):
             setattr(item, attr, attributes[attr])
     db.commit()
     return item

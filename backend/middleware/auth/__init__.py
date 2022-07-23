@@ -5,8 +5,9 @@ from starlette.authentication import (
     AuthenticationBackend, AuthCredentials, BaseUser
 )
 from .token_db import token_db
+from .twilio import Twilio
 from backend.models import find_by_user_id
-from backend.models.user import get_user
+from backend.models import get_user
 from backend.database import SessionLocal
 from strawberry.permission import BasePermission
 from strawberry.types import Info
@@ -15,6 +16,7 @@ from starlette.requests import Request
 from starlette.websockets import WebSocket
 import typing
 
+twilio = Twilio()
 
 class IsAuthenticated(BasePermission):
     message = "User is not logged in."

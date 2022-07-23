@@ -20,6 +20,7 @@ fileConfig(config.config_file_name)
 # target_metadata = None
 
 from backend.database import Base  # noqa
+from backend.models import * # noqa
 
 target_metadata = Base.metadata
 

@@ -10,10 +10,6 @@ class Token(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     token = Column(String)
 
-    def __init__(self, user_id: int, token: str):
-        self.user_id = user_id
-        self.token = token
-
 
 def find_by_user_id(db: Session, id: int):
     token = db.query(Token).\
@@ -22,7 +18,7 @@ def find_by_user_id(db: Session, id: int):
 
 
 def create_token(db: Session, user_id: int, token: str):
-    token = Token(user_id, token)
+    token = Token(user_id=user_id, token=token)
     db.add(token)
     db.commit()
     return token

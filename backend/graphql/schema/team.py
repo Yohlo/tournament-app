@@ -1,61 +1,10 @@
 import strawberry
 from strawberry.types import Info
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from backend.models import Team as TeamModel
 from backend.models import team as teamModel
 from backend.models import player as playerModel
-from .player import Player
-
-
-@strawberry.input
-class SongInput:
-    id: str
-    start: str
-    name: str
-    artist: str
-    duration: str
-    image: str
-
-
-@strawberry.type
-class Song(SongInput):
-
-
-    @classmethod
-    def from_instance(cls, instance: TeamModel):
-        return cls(
-            id=instance.song_id,
-            start=instance.song_start,
-            name=instance.song_name,
-            artist=instance.song_artist,
-            duration=instance.song_duration,
-            image=instance.song_image
-        )
-
-
-@strawberry.input
-class TeamInput:
-    name: str
-    song: SongInput
-    players: List[str]
-
-
-@strawberry.type
-class Team:
-    id: int
-    name: str
-    song: Song
-    players: List[Player]
-
-
-    @classmethod
-    def from_instance(cls, instance: TeamModel):
-        return cls(
-            id=instance.id,
-            name=instance.name,
-            song=Song.from_instance(instance),
-            players=instance.players
-        )
+from .types import Team, TeamInput, Song, SongInput
 
 
 async def create_team(self, info: Info, team: TeamInput) -> Team:

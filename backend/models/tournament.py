@@ -31,7 +31,7 @@ class Tournament(Base):
     end_time: datetime = Column(DateTime)
 
     teams = relationship("Team", secondary=tournament_entry, back_populates="tournaments")
-
+    matches = relationship("TournamentMatch", back_populates="tournament")
 
 def create_tournament(db: Session, name, type, location, desc, logo_url, team_size, enroll_time, start_time, end_time):
     tournament = Tournament(\

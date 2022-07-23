@@ -13,49 +13,7 @@ from backend.settings import settings
 from .player import Player
 from datetime import timedelta
 from jose import jwt
-
-
-@strawberry.type
-class User:
-    id: int
-    admin: bool
-    number: str
-    registration_date: datetime
-    last_activity: datetime
-
-    instance: strawberry.Private[UserModel]
-
-    @strawberry.field
-    def player(self) -> Optional[Player]:
-        return Player.from_instance(self.instance.player)
-
-    @classmethod
-    def from_instance(cls, instance: UserModel):
-        return cls(
-            instance=instance,
-            id=instance.id,
-            number=instance.number,
-            admin=instance.admin,
-            registration_date=instance.registration_date,
-            last_activity=instance.last_activity,
-        )
-
-
-@strawberry.type
-class LoginSuccessWithPlayer:
-    user: User
-
-@strawberry.type
-class LoginSuccessWithoutPlayer:
-    user: User
-
-
-@strawberry.type
-class LoginError:
-    message: str
-
-
-LoginResult = strawberry.union("LoginResult", (LoginSuccessWithPlayer, LoginSuccessWithoutPlayer, LoginError))
+from .types import User, LoginResult
 
 
 async def get_me(self, info: Info) -> Optional[User]:

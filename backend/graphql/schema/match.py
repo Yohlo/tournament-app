@@ -6,49 +6,7 @@ from backend.models import tournament_match as matchModel
 from datetime import datetime
 from .team import Team
 from .tournament import Tournament
-
-
-@strawberry.input
-class MatchCreateInput:
-    tournament_id: int
-    team_one_id: int
-    team_two_id: int
-    table_id: int
-
-
-@strawberry.input
-class MatchEditInput:
-    team1_cups: Optional[int]
-    team2_cups: Optional[int]
-    ot_count: Optional[int]
-    end_time: Optional[datetime]
-
-
-@strawberry.type
-class Match:
-    id: int
-    team1_cups: int
-    team2_cups: int
-    ot_count: int
-    start_time: datetime
-    end_time: datetime
-    tournament: Tournament
-    team1: Team
-    team2: Team
-
-    @classmethod
-    def from_instance(cls, instance: MatchModel):
-        return cls(
-            id=instance.id,
-            team1_cups=instance.team1_cups,
-            team2_cups=instance.team1_cups,
-            ot_count=instance.ot_count,
-            start_time=instance.start_time,
-            end_time=instance.end_time,
-            tournament=instance.tournament,
-            team1=instance.team1,
-            team2=instance.team2
-        )
+from .types import MatchCreateInput, MatchEditInput, Match
 
 
 async def create_match(self, info: Info, match: MatchCreateInput) -> Match:

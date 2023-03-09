@@ -14,7 +14,7 @@ function dhm(ms: number) {
 }
 
 const homeText = '<p class="text-gray-800 font-bold text-xl">Tournament starts at 7:00 PM</p><p class="text-gray-700 font-bold text-md">Doors open at 6:00 PM</p><p class="text-gray-700 font-bold text-md">4546 Eli St, Houston</p>';
-const homeHeadingText = 'July 30, 2022';
+const homeHeadingText = 'March 25, 2023';
 
 const Home = () => {
   const { tournament } = useTournament();
@@ -30,7 +30,7 @@ const Home = () => {
         src={require('../../images/logo.png')}
       />
     </div>
-    <Header fs='3rem'>{ homeHeadingText }</Header>
+    <Header fs='2rem'>{ homeHeadingText }</Header>
     <div dangerouslySetInnerHTML={{
       __html: homeText
     }} />
@@ -47,7 +47,7 @@ const Home = () => {
             return <p className="mt-4 text-gray-700 text-sm">Team registration has been closed.</p>
           }
           return <div
-            className="border-2 mt-4 p-4 border-black w-3/5 mx-auto my-0"
+            className="border-2 mt-4 p-4 border-black w-3/4 mx-auto my-0"
             style={{
               boxShadow: '5px 5px black'
             }}

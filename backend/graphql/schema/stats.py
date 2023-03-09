@@ -5,6 +5,7 @@ from backend.models import Player as PlayerModel
 from backend.models import Tournament as TournamentModel
 from datetime import datetime
 from backend.database import SessionLocal
+from backend.middleware.statistics import statistics
 
 @strawberry.type
 class Record:
@@ -17,28 +18,10 @@ class PlayerStats:
 
     @strawberry.field
     def record(self, info: Info, tournament_id: Optional[strawberry.ID] = None) -> Record:
-        if "db" in info.context:
-            db =  info.context["db"]
-            close = False
-        else:
-            db = SessionLocal()
-            close = True
-
-        w, l = 0, 0
-        player = db.query(PlayerModel).get(self.id)
-        tournaments = db.query(TournamentModel).all() if not tournament_id else [db.query.get(tournament_id)]
-        for tournament in tournaments:
-            for match in tournament.matches:
-                if player in match.team1.players or player in match.team2.players:
-                    p_cups = match.team1_cups if player in match.team1.players else match.team2_cups
-                    o_cups = match.team2_cups if player in match.team1.players else match.team1_cups
-                    if p_cups is None or o_cups is None:
-                        continue
-                    if p_cups > o_cups:
-                        w += 1
-                    else:
-                        l += 1
-        if close: db.close()
+        records = statistics.records[self.id]
+        key_to_use = tournament_id if tournament_id else 'overall'
+        w = records[key_to_use].count('W')
+        l = records[key_to_use].count('L')
         return Record(wins=w, losses=l)
     
     @strawberry.field

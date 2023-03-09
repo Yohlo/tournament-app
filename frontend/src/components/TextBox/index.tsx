@@ -36,11 +36,11 @@ const TextBox = ({ id, type, label, className, value, error, onChange, onFocus, 
         onFocus={onFocus}
         onClick={onClick}
         style={{
-          borderTop: '.5rem solid #ECC500',
+          borderTop: '.5rem solid #e2e8f0',
           letterSpacing: '4px'
         }}
         onBlur={onBlur}
-        className={`disabled:cursor-not-allowed disabled:bg-yellower disabled:text-neutral-800 bg-yellow w-full font-pop text-sm p-2 text-black outline-none rounded-none placeholder-black placeholder-opacity-40 ${className || ''}`}
+        className={`disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-neutral-800 bg-slate-50 w-full font-pop text-sm p-2 text-black outline-none rounded-none placeholder-black placeholder-opacity-40 ${className || ''}`}
         autoComplete={autoComplete}
         placeholder={placeholder}
         disabled={disabled}

@@ -130,7 +130,7 @@ const FinishedMatches = () => {
 
 const Results = () => (
   <div className="mt-6">
-    <Header fs={'2rem'} mx={0}>results</Header>
+    <Header fs={'2rem'} mx={0}>Results</Header>
     <FinishedMatches />
   </div>
 );

@@ -12,6 +12,11 @@ module.exports = {
         'greener': '#007F5C',
         'red': '#a30000',
         'reder': '#820000',
+        'red-600': '#dc2626',
+        "official-red": "",
+        "official-dark-red": "",
+        "official-blue": "#004599",
+        "official-dark-blue": "#00174d"
       },
       fontFamily: {
         'sans': ['Open Sans'],

@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from strawberry.subscriptions import GRAPHQL_TRANSPORT_WS_PROTOCOL, GRAPHQL_WS_PROTOCOL
 from backend.middleware.auth import BasicAuthBackend, token_db
+from backend.middleware.statistics import statistics
+from backend.database import SessionLocal
 from backend.settings import settings
 from backend.models import * # noqa
 from starlette.requests import Request
@@ -78,3 +80,6 @@ app.include_router(music, prefix="/api/music")
 
 from backend.routers.site import site  # noqa
 app.include_router(site)
+
+with SessionLocal() as db:
+    statistics.calculate_records(db)

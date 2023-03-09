@@ -4,7 +4,7 @@ import Users from '../../components/Users';
 
 const Admin = () => (
   <>
-    <Header fs={'2.5rem'} mx={0}>admin</Header>
+    <Header fs={'2.5rem'} mx={0}>Admin</Header>
     <p className="text-gray-600 pb-2 text-xs">
       Additional insights into registered users, teams and more coming soon.
     </p>

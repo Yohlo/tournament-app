@@ -1,0 +1,24 @@
+.active {
+    position: relative;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.active:after,
+.active:before {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border: solid black;
+    border-width: 2px 2px 0 0;
+    display: block;
+    right: 11px;
+    top: 11px;
+}
+
+.active::after {
+    border-width: 0 0 2px 2px;
+    left: 12px;
+    top: 25px;
+}

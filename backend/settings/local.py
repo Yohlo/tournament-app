@@ -7,17 +7,10 @@ import os
 
 class Settings(BaseSettings):
     Debug = True
-    DatabaseUri = "sqlite:///./db.sqlite3"
-    SpotifyClientID = os.environ.get("SPOTIFY_CLIENT_ID")
-    SpotifyClientSecret = os.environ.get("SPOTIFY_CLIENT_SECRET")
-    FrontEndUrl = "http://localhost:3000"
-    BackEndUrl = "http://localhost:8000"
-    AuthSecret = 'e9d164adbfb70fd31d33ddd871edc841186bf7031896f4020e61bc6f71b4593c'
-    AuthAlgorithm = 'HS256'
-    AuthTokenExpireMinutes = 30
-    TwilioAccountSid = os.environ.get("TWILIO_ACCOUNT_SID")
-    TwilioAuthToken = os.environ.get("TWILIO_AUTH_TOKEN")
-    TwilioServiceSid = os.environ.get("TWILIO_SERVICE_SID")
+    DatabaseUri = "sqlite:////home/kyle/db/dev/db.sqlite3"
+    FrontEndUrl = "https://bakerloo3000.yohler.net"
+    BackEndUrl = "https://bakerloo8000.yohler.net"
+    AuthTokenExpireMinutes = 5000
 
 
 print("THIS IS A DEVELOPMENT ENVIRONMENT! YOU SHOULD NOT SEE THIS MESSAGE IN PRODUCTION")

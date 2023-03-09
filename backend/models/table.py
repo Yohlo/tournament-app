@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum, event
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum, event, ForeignKey
 from sqlalchemy.orm import Session, relationship
 from backend.database import Base
 from .shared import get_db_item_by_id, get_db_items
+from .active_match import active_match
 from .enums import TableType
 from datetime import datetime
 import enum
@@ -12,7 +13,7 @@ class Table(Base):
     id: int = Column(Integer, primary_key=True, index=True, nullable=False)
     name: str = Column(String, nullable=False)
     type: TableType = Column(Enum(TableType))
-    matches = relationship("TournamentMatch", back_populates="table")
+    active_match = relationship("TournamentMatch", secondary=active_match, uselist=False)
 
 def create_table(db: Session, name, type):
     table = Table(\

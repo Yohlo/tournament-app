@@ -8,11 +8,10 @@ interface Props {
 }
 
 const Button: React.FC<Props> = ({ type, variant, onClick, children, disabled }: Props) => {
-  const colors = `bg-${variant}-500 hover:bg-${variant}:700`;
-
+  const colors = `bg-${variant} hover:bg-${variant}er`;
   return (
     <button
-      className={`btn w-full font-pop font-bold py-2 px-4 mb-4 text-white rounded ${disabled ? 'cursor-not-allowed bg-gray-400' : colors}`}
+      className={`btn ${disabled ? 'cursor-not-allowed bg-gray-400' : colors} w-full font-pop font-bold py-2 px-4 mb-4 text-white `}
       onClick={onClick}
       type={type}
       disabled={disabled}

@@ -25,9 +25,10 @@ const RedirectOffServer = ({ target }: RedirectProps) => {
 
 const Authorization: React.FC<{ children: any }> = ({ children }) => {
   const accessToken = sessionStorage.getItem('access_token');
+  const expires = sessionStorage.getItem('expires');
 
   // redirect to the login service
-  if (!accessToken) {
+  if (!accessToken || (expires ? new Date() > new Date(+expires * 1000) : true)) {
     return (
       <RedirectOffServer
         target={`${SERVER_URL}/api/music/auth/login`}

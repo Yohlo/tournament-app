@@ -13,14 +13,26 @@ from backend.settings import settings
 from .player import Player
 from datetime import timedelta
 from jose import jwt
-from .types import User, LoginResult
+from .types import User, LoginResult, LoginSuccessWithPlayer, LoginSuccessWithoutPlayer
 
 
 async def get_me(self, info: Info) -> Optional[User]:
     request = info.context["request"]
     db = info.context["db"]
-    user_id = request.user.current_user_id
-    user = get_user(db, user_id)
+    try:
+        user_id = request.user.current_user_id
+        user = get_user(db, user_id)
+        return User.from_instance(user)
+    except:
+        return None
+
+
+async def make_admin(self, info: Info, id: strawberry.ID) -> User:
+    request = info.context["request"]
+    db = info.context["db"]
+    user = get_user(db, id)
+    user.admin = True
+    db.commit()
     return User.from_instance(user)
 
 

@@ -9,7 +9,7 @@ from .types import Team, TeamInput, Song, SongInput
 
 async def create_team(self, info: Info, team: TeamInput) -> Team:
     db = info.context["db"]
-    new_team = teamModel.create_team(db, team.name, team.song_id, team.song_start, team.song_name, team.song_artist, team.song_duration, team.song_image)
+    new_team = teamModel.create_team(db, team.name, team.song.id, team.song.start, team.song.name, team.song.artist, team.song.duration, team.song.image)
     for player_id in team.players:
         player = playerModel.get_player(db, player_id)
         new_team.players += [player]
@@ -23,15 +23,15 @@ async def get_teams(self, info: Info) -> List[Team]:
     return [Team.from_instance(team) for team in teams]
 
 
-async def get_team(self, info: Info, id: int) -> Team:
+async def get_team(self, info: Info, id: strawberry.ID) -> Team:
     db = info.context["db"]
     team = teamModel.get_team(db)
     return Team.from_instance(team)
 
 
-async def set_team(self, info: Info, id: int, team: TeamInput) -> Team:
+async def set_team(self, info: Info, id: strawberry.ID, team: TeamInput) -> Team:
     db = info.context["db"]
-    item = get_team(db, id)
+    item = teamModel.get_team(db, id)
     item.name = team.name
     item.song_id = team.song.id
     item.song_name = team.song.name
@@ -40,3 +40,4 @@ async def set_team(self, info: Info, id: int, team: TeamInput) -> Team:
     item.song_artist = team.song.artist
     item.song_duration = team.song.duration
     db.commit()
+    return Team.from_instance(item)

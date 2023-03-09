@@ -1,23 +1,22 @@
-import { useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import UsersRow, { User } from './UsersRow';
-import { USERS_SUBSCRIPTION } from '../../services/subscriptions';
+import { ALL_USERS } from '../../services/queries';
+import Loader from '../Loader';
 
 const Users = () => {
-  const { data, loading } = useSubscription(USERS_SUBSCRIPTION);
+  const { data, loading } = useQuery(ALL_USERS);
   
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loader />
   }
 
   return (
     <>
-      <p className="text-gray-600 pt-2">Registered Users</p>
+      <p className="text-gray-600 pt-2">Registered Users ({`${data?.users.length}`})</p>
       <table className="table-auto w-full text-left border">
         <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
           <tr>
-            <th className="w-1/12 py-3 pl-2 pr-1">UID</th>
-            <th className="w-1/12 py-3 px-1">PID</th>
-            <th className="py-3 px-6">FULL NAME</th>
+            <th className="py-3 px-6">NAME</th>
             <th className="w-1/12 py-3 px-6">NUMBER</th>
           </tr>
         </thead>

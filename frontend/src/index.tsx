@@ -4,11 +4,14 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import ApolloWrapper from './apollo';
 import App from './App';
+import { UserProvider } from './contexts/User';
 
 const root = createRoot(document.getElementById('root')!);
 root.render((
   <ApolloWrapper>
-    <App />
+    <UserProvider>
+      <App />
+    </UserProvider>
   </ApolloWrapper>
 ));
 

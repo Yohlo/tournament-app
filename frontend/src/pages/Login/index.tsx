@@ -1,110 +1,205 @@
-import React, { useEffect, useContext, useState, useRef, MutableRefObject } from 'react';
-import { useMutation } from '@apollo/client';
-import { LOGIN } from '../../services/mutations';
+import React, { useEffect, useContext, useState, useRef, MutableRefObject, FormEventHandler } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { START_LOGIN, VERIFY_LOGIN } from '../../services/mutations';
 import TextBox from '../../components/TextBox';
 import { useToasts } from '../../hooks';
-import AppContext from '../../contexts';
-import Header from '../../components/Header';
+import Loader from '../../components/Loader';
+import { User } from '../../types';
+import PickPlayerPage from './PickPlayerPage';
+import { useUser } from '../../contexts/User';
+
 
 const Login = () => {
   const [number, setNumber] = useState('');
-  const [value, setValue] = useState('');
+  const [code, setCode] = useState('');
   const [error, setError] = useState('');
+  const [showVerify, setShowVerify] = useState(false);
+  const [partialUser, setPartialUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(AppContext);
   const { successToast, errorToast } = useToasts();
-  const [login] = useMutation(LOGIN);
-  const ref: MutableRefObject<HTMLInputElement | undefined> = useRef();
+  const [start_login] = useMutation(START_LOGIN);
+  const [verify_login] = useMutation(VERIFY_LOGIN);
+  const { setUser } = useUser();
+  const numRef: MutableRefObject<HTMLInputElement | undefined> = useRef();
+  const verRef: MutableRefObject<HTMLInputElement | undefined> = useRef();
+
 
   useEffect(() => {
-    setValue(formatNumber(number));
-  }, [setValue, number]);
+    if (numRef.current) {
+      setCursorPos(numRef, formatNumber(number));
+    }
+  }, [number, numRef]);
+
 
   useEffect(() => {
-    setCursorPos();
-  }, [value, ref]);
+    if (verRef.current) {
+      setCursorPos(verRef, formatNumber(code, '______'));
+    }
+  }, [code, verRef]);
 
-  const setCursorPos = () => {
-    if (ref.current && value) {
-      ref.current.selectionStart = value.search('_');
-      ref.current.selectionEnd = value.search('_');
+
+  const setCursorPos = (ref: MutableRefObject<HTMLInputElement | undefined>, value: string) => {
+    const pos = value.search('_');
+    if (ref.current && pos >= 0) {
+      ref.current.selectionStart = pos;
+      ref.current.selectionEnd = pos;
+    } else if (ref.current) {
+      ref.current.selectionStart = value.length;
+      ref.current.selectionEnd = value.length;
     }
   }
 
-  const formatNumber = (number: string) => {
-    let digits = '(___) ___-____';
+  const formatNumber = (number: string, digits = '(___) ___-____') => {
     for (let i = 0; i < number.length; i++) {
       digits = digits.replace('_', number.charAt(i));
     }
     return digits;
   }
 
-  const handleSubmit = async () => {
+  const handleNumberSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
+    event.preventDefault();
     if (number.length < 10) {
       setError('Must enter a full ten-digit phone number.');
       return;
-    } else if(error.length) {
+    } else if (error.length) {
       setError('');
     }
 
     setLoading(true);
-    const response = await login({
+    const response = await start_login({
       variables: {
         number,
       },
     });
 
+    setLoading(false);
+    if (!response.data) {
+      errorToast('Unknown error submitting number. Please try again.');
+    } else {
+      // check if verification code was sent
+      if (response.data.startVerify) {
+        // change to number screen
+        setShowVerify(true);
+      } else {
+        errorToast('Unknown error starting SMS verification.');
+      }
+    }
+  }
+
+  const handleVerifySubmit: FormEventHandler<HTMLFormElement> = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    const response = await verify_login({
+      variables: {
+        number,
+        code
+      },
+    });
+
+    setLoading(false);
     if (!response.data) {
       errorToast('Unknown error signing in.');
+    } else if (response.data.checkVerify.message) {
+      errorToast(response.data.checkVerify.message);
     }
 
-    const { user }: { user: any } = response.data.login;
-    const errors: string[] = response.data.errors;
+    const { user }: { user: any } = response.data.checkVerify;
     setLoading(false);
 
-    if (user && setUser) {
-      setUser(user);
-      successToast('Successfully logged in!');
+    if (setUser && user.player) {
+      // player already tied to account, can just log in
+      if (user) {
+        setUser(user);
+        successToast('Successfully logged in!');
+      } else {
+        errorToast('Unknown error signing in.');
+      }
     } else {
-      errorToast(errors?.length ? errors[0] : 'Unknown error signing in.');
+      // no player, need to ask
+      setPartialUser(user);
     }
   };
 
-  const handleChange = (value: string) => {
+  const handleNumberChange = (value: string) => {
+    let removeLastNumber = false;
+    if (['-', ' '].find(char => !value.includes(char))) {
+      removeLastNumber = true;
+    }
     ['(', ')', '_', ' ', '-'].map((digit: string) => value = value.replaceAll(digit, ''));
     const reg: RegExp = /^[0-9]*$/;
+    if (removeLastNumber) {
+      value = value.substring(0, value.length - 1);
+    }
     if (reg.test(value)) {
       setNumber(value);
     }
   }
 
-  const handleFocusOrClick = (event: any) => {
-    setCursorPos();
+  const handleCodeChange = (value: string) => {
+    value = value.replaceAll('_', '');
+    setCode(value);
   }
 
-  return (
-    !loading
-      ? (
-        <div className="flex flex-col text-center items-center">
-          <Header xl={3}>Enter Your Phone Number</Header>
-          <TextBox
-            id="number"
-            className='w-36 text-center'
-            innerRef={ref}
-            type="string"
-            value={value}
-            onChange={handleChange}
-            onFocus={handleFocusOrClick}
-            onClick={handleFocusOrClick}
-            error={error}
-          />
-          <button onClick={handleSubmit} className="btn w-1/2 m-2 ml-0 font-pop text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">
-            Play
-          </button>
-        </div>
-      )
-      : (<p>Loading...</p>)
+  const generateFocusOrClickHandler = (ref: React.MutableRefObject<HTMLInputElement | undefined>, value: string) => (
+    (event: any) => {
+      setCursorPos(ref, value);
+    }
   );
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  // if a partial user is shown, prompt for player
+  if (partialUser) {
+    return <PickPlayerPage user={partialUser} />
+  }
+
+  if (showVerify) {
+    return (
+      <form className="flex flex-col" onSubmit={handleVerifySubmit}>
+        <p className="font-pd text-white leading-10 mb-2">enter verification code</p>
+        <p className="font-pop mb-2 text-xs">Code was sent to +1{formatNumber(number)}</p>
+        <TextBox
+          id="code"
+          className='w-full text-sm'
+          innerRef={verRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete='one-time-code'
+          value={formatNumber(code, '______')}
+          onChange={handleCodeChange}
+          onFocus={generateFocusOrClickHandler(verRef, formatNumber(code, '______'))}
+          onClick={generateFocusOrClickHandler(verRef, formatNumber(code, '______'))}
+          error={error}
+        />
+        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-yellow hover:bg-yellower text-black font-bold py-2 px-4 mb-6" type="submit">
+          Play
+        </button>
+      </form>
+    );
+  } else {
+    return (
+      <form className="flex flex-col" onSubmit={handleNumberSubmit}>
+        <p className="font-pd text-white leading-10 mb-8">enter your phone number</p>
+        <TextBox
+          id="number"
+          className='w-full text-sm'
+          innerRef={numRef}
+          type="tel"
+          value={formatNumber(number)}
+          onChange={handleNumberChange}
+          onFocus={generateFocusOrClickHandler(numRef, formatNumber(number))}
+          onClick={generateFocusOrClickHandler(numRef, formatNumber(number))}
+          error={error}
+        />
+        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-yellow hover:bg-yellower text-black font-bold py-2 px-4 mb-6" type="submit">
+          Play
+        </button>
+      </form>
+    );
+  }
 };
 
 export default Login;

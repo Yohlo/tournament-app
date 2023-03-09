@@ -49,6 +49,21 @@ def get_unassociated_players(db: Session):
     return players.all()
 
 
+def get_free_agents(db: Session, tournament_id: int):
+    from backend.models import Tournament
+    players = db.query(Player).\
+        all()
+    tournament = db.query(Tournament).\
+        filter(Tournament.id == tournament_id).\
+        first()
+    teams = tournament.teams
+    p_ids = []
+    for team in teams:
+        for p in team.players:
+            p_ids.append(p.id)
+    return [player for player in players if player.id not in p_ids]
+
+
 def get_player_by_name(db: Session, first_name: str, last_name: str):
     player = db.query(Player).\
         filter(Player.last_name == last_name).\

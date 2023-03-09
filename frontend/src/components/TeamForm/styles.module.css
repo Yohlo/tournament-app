@@ -1,0 +1,51 @@
+.label {
+    position: relative;
+    width: fit-content;
+    padding-left: 5px;
+    padding-top: 3px;
+    cursor: default;
+}
+
+.label:after,
+.label:before {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border: solid black;
+    border-width: 2px 2px 0 0;
+    display: block;
+    right: -5px;
+    top: 5px;
+}
+
+.label::after {
+    border-width: 2px 0 0 2px;
+    left: 0;
+    top: 5px;
+}
+
+@keyframes left-pulse-animation {
+    0% {
+        width: 5px;
+        height: 5px;
+    }
+    50% {
+        width: 6px;
+        height: 6px;
+    }
+    100% {
+        width: 5px;
+        height: 5px;
+    }
+}
+
+.label:hover::after,
+.label.pulse::after {
+	animation: left-pulse-animation 0.8s ease-in-out infinite;
+}
+
+.label:hover::before,
+.label.pulse:before {
+	animation: left-pulse-animation 0.8s ease-in-out infinite;
+}

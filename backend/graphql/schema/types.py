@@ -8,13 +8,18 @@ from backend.models import Tournament as TournamentModel
 from backend.models import TournamentMatch as MatchModel
 from backend.models import Table as TableModel
 from backend.models.enums import TournamentType, TableType
+from .stats import * # noqa
 from datetime import datetime
 
 @strawberry.type
 class PlayerShort:
-    id: int
+    id: strawberry.ID
     last_name: str
     first_name: str
+    
+    @strawberry.field
+    def stats(self) -> PlayerStats:
+        return PlayerStats(self.id)
 
     @classmethod
     def from_instance(cls, instance: PlayerModel):
@@ -37,8 +42,6 @@ class SongInput:
 
 @strawberry.type
 class Song(SongInput):
-
-
     @classmethod
     def from_instance(cls, instance: TeamModel):
         return cls(
@@ -60,7 +63,7 @@ class TeamInput:
 
 @strawberry.type
 class Team:
-    id: int
+    id: strawberry.ID
     name: str
     song: Song
     players: List[PlayerShort]
@@ -72,16 +75,20 @@ class Team:
             id=instance.id,
             name=instance.name,
             song=Song.from_instance(instance),
-            players=instance.players
+            players=[PlayerShort.from_instance(player) for player in instance.players]
         )
 
 
 @strawberry.type
 class Player:
-    id: int
+    id: strawberry.ID
     last_name: str
     first_name: str
     teams: List[Team]
+    
+    @strawberry.field
+    def stats(self, info: Info) -> PlayerStats:
+        return PlayerStats(self.id)
 
     @classmethod
     def from_instance(cls, instance: PlayerModel):
@@ -89,34 +96,33 @@ class Player:
             id=instance.id,
             last_name=instance.last_name,
             first_name=instance.first_name,
-            teams=instance.teams
+            teams=[Team.from_instance(team) for team in instance.teams]
         )
 
 
 @strawberry.input
 class MatchCreateInput:
-    tournament_id: int
-    team_one_id: int
-    team_two_id: int
-    table_id: int
+    tournament_id: strawberry.ID
+    team_one_id: strawberry.ID
+    team_two_id: strawberry.ID
+    table_id: strawberry.ID
 
 
 @strawberry.input
-class MatchEditInput:
-    team1_cups: Optional[int]
-    team2_cups: Optional[int]
+class MatchEndInput:
+    team_one_cups: Optional[int]
+    team_two_cups: Optional[int]
     ot_count: Optional[int]
-    end_time: Optional[datetime]
 
 
 @strawberry.type
 class Match:
-    id: int
-    team1_cups: int
-    team2_cups: int
-    ot_count: int
-    start_time: datetime
-    end_time: datetime
+    id: strawberry.ID
+    team_one_cups: Optional[int]
+    team_two_cups: Optional[int]
+    ot_count: Optional[int]
+    start_time: Optional[datetime]
+    end_time: Optional[datetime]
     team1: Team
     team2: Team
 
@@ -124,13 +130,13 @@ class Match:
     def from_instance(cls, instance: MatchModel):
         return cls(
             id=instance.id,
-            team1_cups=instance.team1_cups,
-            team2_cups=instance.team1_cups,
+            team_one_cups=instance.team1_cups,
+            team_two_cups=instance.team2_cups,
             ot_count=instance.ot_count,
             start_time=instance.start_time,
             end_time=instance.end_time,
-            team1=instance.team1,
-            team2=instance.team2
+            team1=Team.from_instance(instance.team1),
+            team2=Team.from_instance(instance.team2),
         )
 
 
@@ -143,13 +149,13 @@ class TournamentInput:
     logo_url: str
     enroll_time: datetime
     start_time: datetime
-    end_time: Optional[datetime]
+    end_time: Optional[datetime] = None
     team_size: int = strawberry.field(default=2)
 
 
 @strawberry.type
 class Tournament:
-    id: int
+    id: strawberry.ID
     name: str
     type: TournamentType
     location: str
@@ -158,9 +164,19 @@ class Tournament:
     team_size: int
     enroll_time: datetime
     start_time: datetime
-    end_time: datetime
+    end_time: Optional[datetime]
     teams: List[Team]
     matches: List[Match]
+
+    @strawberry.field
+    def champions(self, info: Info) -> Optional[Team]:
+        db = info.context["db"]
+        tournament = db.query(TournamentModel).get(self.id)
+        if not len(tournament.matches): return None
+        matches = sorted(tournament.matches, key = lambda m: m.end_time)[::-1]
+        finale = matches[0]
+        champions = finale.team1 if finale.team1_cups > finale.team2_cups else finale.team2
+        return Team.from_instance(champions)
 
     @classmethod
     def from_instance(cls, instance: TournamentModel):
@@ -175,29 +191,31 @@ class Tournament:
             enroll_time=instance.enroll_time,
             start_time=instance.start_time,
             end_time=instance.end_time,
-            teams=instance.teams
+            teams=[Team.from_instance(team) for team in instance.teams],
+            matches=[Match.from_instance(match) for match in instance.matches],
         )
 
 
 @strawberry.type
 class Table:
-    id: int
+    id: strawberry.ID
     name: str
     type: TableType
-    matches: List[Match]
+    active_match: Optional[Match]
 
     @classmethod
-    def from_instance(cls, instance: PlayerModel):
+    def from_instance(cls, instance: TableModel):
         return cls(
             id=instance.id,
-            last_name=instance.last_name,
-            first_name=instance.first_name
+            name=instance.name,
+            type=instance.type,
+            active_match=Match.from_instance(instance.active_match) if instance.active_match else None
         )
 
 
 @strawberry.type
 class User:
-    id: int
+    id: strawberry.ID
     admin: bool
     number: str
     registration_date: datetime
@@ -207,7 +225,8 @@ class User:
 
     @strawberry.field
     def player(self) -> Optional[Player]:
-        return Player.from_instance(self.instance.player)
+        if self.instance.player:
+            return Player.from_instance(self.instance.player)
 
     @classmethod
     def from_instance(cls, instance: UserModel):

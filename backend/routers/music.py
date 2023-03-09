@@ -28,7 +28,6 @@ music = APIRouter()
 @music.get("/auth/login")
 def login():
     state = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(16))
-    print(f'state: {state}')
     scope = 'user-read-private streaming user-read-email user-read-playback-state'
 
     payload = {
@@ -67,6 +66,7 @@ def callback(error: str = '', code: str = '', state: str = '', spotify_auth_stat
         redirect_to_app = RedirectResponse(url=f'{settings.FrontEndUrl}/music/auth/success')
         redirect_to_app.set_cookie(key='access_token', value=res_data.get('access_token'))
         redirect_to_app.set_cookie(key='refresh_token', value=res_data.get('refresh_token'))
+        redirect_to_app.set_cookie(key='expires_in', value=res_data.get('expires_in'))
 
         return redirect_to_app
     except Exception:

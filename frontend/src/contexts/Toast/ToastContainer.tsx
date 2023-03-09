@@ -46,11 +46,11 @@ const ToastComponent: React.FC<Toast> = ({ id, removed, type, message }: Toast) 
   }, [removed, timer]);
 
   return (
-    <div className={`transition ease-in-out w-max max-w-sm flex rounded items-center shadow-md mx-auto ${type === ToastType.SUCCESS ? 'bg-green-500 border-green-700' : 'bg-red-500 border-red-700'} ${removed ? 'opacity-0 px-0 py-0 -translate-y-96 h-0' : 'py-2 px-3 mb-2 border-l-4'}`}>
+    <div className={`transition ease-in-out w-max max-w-sm flex rounded items-center shadow-md mx-auto ${type === ToastType.SUCCESS ? 'bg-green border-greener' : 'bg-red border-reder'} ${removed ? 'opacity-0 px-0 py-0 -translate-y-96 h-0' : 'py-2 px-3 mb-2 border-l-4'}`}>
       { !removed
         && (
           <>
-            <div className={`${type === ToastType.SUCCESS ? 'text-green-500' : 'text-red-500'} rounded-full bg-white mr-3`}>
+            <div className={`${type === ToastType.SUCCESS ? 'text-green' : 'text-red'} rounded-full bg-white mr-3`}>
               {
               type === ToastType.SUCCESS
                 ? <SuccessSvg />

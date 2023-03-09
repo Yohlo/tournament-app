@@ -36,6 +36,10 @@ export const copyTextToClipboard = (text: string, onSuccess: () => void, onError
 };
 
 export const timeSince = (date: string): string => {
+  if (!date) {
+    return '';
+  }
+
   const seconds = Math.floor((+new Date() - +new Date(date)) / 1000);
   let interval = seconds / 31536000;
   if (interval > 1) {

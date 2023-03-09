@@ -104,3 +104,24 @@ export const useSessionStorage = (key: string, initialValue: string): [string, R
 
   return [value, setValue];
 };
+
+export const useClickOutside = (ref: any, ref2: any, callback: any) => {
+
+  const handleClick = (event: any) => {
+    const inFirst = ref.current && ref.current.contains(event.target);
+    const inSecond = ref2.current && ref2.current.contains(event.target);
+
+    if (!(inFirst || inSecond)) {
+      callback();
+    }
+  }
+
+  useEffect(() => {
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClick);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [ref]);
+}

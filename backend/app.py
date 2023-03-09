@@ -14,7 +14,7 @@ settings.BaseDir = _basedir
 
 app = FastAPI()
 
-origins = ["http://localhost", "https://bakerloo3000.yohler.net"]
+origins = ["localhost", "https://bakerloo3000.yohler.net", "https://tournament-dev.yohler.net"]
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,10 +1,11 @@
 import Header from '../../components/Header';
+import TeamForm from '../../components/TeamForm';
 import Users from '../../components/Users';
 
 const Admin = () => (
   <>
-    <Header xl={3} mx={0}>Admin</Header>
-    <p className="text-gray-600 pt-2 text-xs">
+    <Header fs={'2.5rem'} mx={0}>admin</Header>
+    <p className="text-gray-600 pb-2 text-xs">
       Additional insights into registered users, teams and more coming soon.
     </p>
 

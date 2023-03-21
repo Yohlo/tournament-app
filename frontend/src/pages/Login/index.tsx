@@ -7,6 +7,7 @@ import Loader from '../../components/Loader';
 import { User } from '../../types';
 import PickPlayerPage from './PickPlayerPage';
 import { useUser } from '../../contexts/User';
+import Header from '../../components/Header';
 
 
 const Login = () => {
@@ -158,7 +159,7 @@ const Login = () => {
   if (showVerify) {
     return (
       <form className="flex flex-col" onSubmit={handleVerifySubmit}>
-        <p className="font-pd text-white leading-10 mb-2">enter verification code</p>
+        <Header mx={0}>enter verification code</Header>
         <p className="font-pop mb-2 text-xs">Code was sent to +1{formatNumber(number)}</p>
         <TextBox
           id="code"
@@ -174,15 +175,15 @@ const Login = () => {
           onClick={generateFocusOrClickHandler(verRef, formatNumber(code, '______'))}
           error={error}
         />
-        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-yellow hover:bg-yellower text-black font-bold py-2 px-4 mb-6" type="submit">
-          Play
+        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-official-blue hover:bg-official-dark-blue text-white font-bold py-2 px-4 mb-6" type="submit">
+          Submit
         </button>
       </form>
     );
   } else {
     return (
       <form className="flex flex-col" onSubmit={handleNumberSubmit}>
-        <p className="font-pd text-white leading-10 mb-8">enter your phone number</p>
+        <Header mx={0}>enter your phone number</Header>
         <TextBox
           id="number"
           className='w-full text-sm'
@@ -194,8 +195,8 @@ const Login = () => {
           onClick={generateFocusOrClickHandler(numRef, formatNumber(number))}
           error={error}
         />
-        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-yellow hover:bg-yellower text-black font-bold py-2 px-4 mb-6" type="submit">
-          Play
+        <button className="btn w-1/2 m-2 ml-0 font-pop self-end text-lg bg-official-blue hover:bg-official-dark-blue text-white font-bold py-2 px-4 mb-6" type="submit">
+          Log in
         </button>
       </form>
     );

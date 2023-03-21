@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ className, fs, mx, children, wrap=false }: Props) => (
-  <div className={`${className} font-pd font-bold ${wrap ? '' : 'whitespace-nowrap'} text-white mx-${mx}`}>
+  <div className={`${className} font-pop text-neutral-500 font-bold ${wrap ? '' : 'whitespace-nowrap'} text-left w-min mx-${mx}`}>
     <p style={{
       fontSize: fs
     }}>{children}</p>
@@ -15,7 +15,7 @@ const Header: React.FC<Props> = ({ className, fs, mx, children, wrap=false }: Pr
 );
 
 Header.defaultProps = {
-  fs: '16px',
+  fs: '18px',
   mx: 'auto',
 };
 

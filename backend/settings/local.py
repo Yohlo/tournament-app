@@ -8,8 +8,6 @@ import os
 class Settings(BaseSettings):
     Debug = True
     DatabaseUri = "sqlite:////home/kyle/db/dev/db.sqlite3"
-    FrontEndUrl = "https://bakerloo3000.yohler.net"
-    BackEndUrl = "https://bakerloo8000.yohler.net"
     AuthTokenExpireMinutes = 5000
 
 

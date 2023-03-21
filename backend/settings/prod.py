@@ -8,5 +8,3 @@ import os
 class Settings(BaseSettings):
     Debug = True
     DatabaseUri = "sqlite:////home/kyle/db/prod/db.sqlite3"
-    FrontEndUrl = "https://tournament.yohler.net"
-    BackEndUrl = "https://tournament.yohler.net"

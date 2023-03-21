@@ -86,7 +86,7 @@ const ActiveGames = () => {
 
 const Matches = () => (
   <>
-    <Header fs="2.5rem" mx={0}>active matches</Header>
+    <Header fs="2rem" mx={0}>Ongoing Matches</Header>
     <ActiveGames />
     <Results />
   </>

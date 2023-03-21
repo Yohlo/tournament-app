@@ -8,9 +8,9 @@ const History = () => {
 
   return (
     <>
-      <Header fs={'2rem'} mx={0} wrap={true}>previous tournaments</Header>
+      <Header fs={'2rem'} mx={0} wrap={true}>Past Tournaments</Header>
       <p className="text-gray-600 pb-2 text-xs">
-        Insights and statistics on wins, appearances and cups are coming soon. For now, this just shows which teams have previously competed. Winners appear at the top of the list.
+        Insights and statistics on wins, appearances and cups are coming soon (like, this weekend soon). For now, this just shows which teams have previously competed.
       </p>
       <section>
         {

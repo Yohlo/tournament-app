@@ -40,7 +40,10 @@ function App() {
                     }}
                     src={require('./images/logo.png')}
                   />
-                  <hr />
+                  <hr style={{
+                    marginTop: '1.5rem',
+                    marginBottom: '1rem'
+                  }} />
                 </div>
                 <Content styles={styles.loginContent}>
                   <Routes key="not-logged-in">
@@ -83,7 +86,7 @@ function App() {
                               >
                                 <img alt="logo"
                                   style={{
-                                    width: '20rem',
+                                    width: '10rem',
                                   }}
                                   src={require('./images/logo.png')}
                                 />
@@ -110,7 +113,7 @@ function App() {
                           <Route path="/music/auth/success" element={<Success />} />
                         )
                       }
-                      <Route path="*" element={<Header fs={'3rem'} wrap={true}>404 - Not Found</Header>} />
+                      <Route path="*" element={<Header fs={'3rem'} wrap={false}>404 - Not Found</Header>} />
                     </Route>
                   </Routes>
                 </div>

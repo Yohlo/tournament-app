@@ -18,6 +18,8 @@ class PlayerStats:
 
     @strawberry.field
     def record(self, info: Info, tournament_id: Optional[strawberry.ID] = None) -> Record:
+        if self.id not in statistics.records:
+            statistics.records[self.id] = ''
         records = statistics.records[self.id]
         key_to_use = tournament_id if tournament_id else 'overall'
         w = records[key_to_use].count('W')

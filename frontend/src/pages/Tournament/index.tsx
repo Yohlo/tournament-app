@@ -152,12 +152,16 @@ const Tournament = () => {
     }
   });
 
-  const timestampToMs = (timestamp: string): number => {
+  const timestampToMs = (timestamp: string, duration = false): number => {
     try {
       const timestampParts = timestamp.split(':');
       const mm = parseInt(timestampParts[0], 10);
       const ss = parseInt(timestampParts[1], 10);
-      return (mm * 60 + ss) * 1000;
+      const ms = (mm * 60 + ss) * 1000;
+      if (duration) {
+        return ms > 15000 ? 15000 : ms;
+      }
+      return ms;
     } catch {
       return 0;
     }
@@ -189,7 +193,7 @@ const Tournament = () => {
       uris: [`spotify:track:${song.id}`],
       positionMs: timestampToMs(song.start),
     })
-      .then(() => new Promise((resolve) => setTimeout(resolve, timestampToMs(song?.duration))))
+      .then(() => new Promise((resolve) => setTimeout(resolve, timestampToMs(song?.duration, true))))
       .then(() => pause())
       .then(() => new Promise((resolve) => setTimeout(resolve, 1000)));
   };
